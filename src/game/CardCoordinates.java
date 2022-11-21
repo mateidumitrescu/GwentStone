@@ -4,6 +4,11 @@ public class CardCoordinates {
     private int x;
     private int y;
 
+    CardCoordinates(int x, int y) {
+        setX(x);
+        setY(y);
+    }
+
     public int getY() {
         return y;
     }

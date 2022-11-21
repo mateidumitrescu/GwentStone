@@ -2,6 +2,7 @@ package game;
 
 import cards.*;
 import fileio.*;
+import interfaces.Hero;
 
 import java.util.ArrayList;
 
@@ -42,15 +43,15 @@ public class Game {
         this.playerTwo = playerTwo;
     }
 
-    public ArrayList<GameRound> getGames() {
+    public ArrayList<GamesInput> getGames() {
         return games;
     }
 
-    public void setGames(ArrayList<GameRound> games) {
+    public void setGames(ArrayList<GamesInput> games) {
         this.games = games;
     }
 
-    private ArrayList<GameRound> games;
+    private ArrayList<GamesInput> games;
 
     public Card returnCard(String name) {
         switch (name) {
@@ -106,7 +107,7 @@ public class Game {
     }
 
     // transfer input decks to players
-    void transferDecks(DecksInput playerDecks, Player player) {
+    public void transferDecks(DecksInput playerDecks, Player player) {
         ArrayList<ArrayList<CardInput>> decks = playerDecks.getDecks();
         ArrayList<ArrayList<Card>> decksPlayerOne = new ArrayList<>();
 
@@ -126,7 +127,7 @@ public class Game {
     }
 
     // set the data from input file to this Game class
-    void setDecksForPlayers(Input inputData) {
+    public void setDecksForPlayers(Input inputData) {
         DecksInput playerOneDecks = inputData.getPlayerOneDecks();
         DecksInput playerTwoDecks = inputData.getPlayerTwoDecks();
 
@@ -142,8 +143,77 @@ public class Game {
         transferDecks(playerTwoDecks, this.playerTwo);
     }
 
-    void setGameInput(GameInput gameInput) {
-        StartGameInput startGameInput = gameInput.getStartGame();
+    // transfer hero from data
+    public Card setHero(CardInput playerHeroToTransfer) {
+        Card playerHero = null;
+        switch (playerHeroToTransfer.getName()) {
+            case "Lord Royce" -> playerHero = new LordRoyce();
+            case "Empress Thorina" -> playerHero = new EmpressThorina();
+            case "King Mudface" -> playerHero = new KingMudface();
+            case "General Kocioraw" -> playerHero = new GeneralKocioraw();
+            default -> playerHero = new Card();
+        }
+        playerHero.setName(playerHeroToTransfer.getName());
+        playerHero.setMana(playerHeroToTransfer.getMana());
+        playerHero.setAttackDamage(playerHeroToTransfer.getAttackDamage());
+        playerHero.setHealth(playerHeroToTransfer.getHealth());
+        playerHero.setDescription(playerHeroToTransfer.getDescription());
+        playerHero.setColors(playerHeroToTransfer.getColors());
+        playerHero.setHasUsedAbility(false);
+
+        return playerHero;
+
+    }
+
+    // transfer startGameInput
+    public void setInputOfGame(InputPlayers input, GameInput game) {
+        input.setShuffleSeed(game.getStartGame().getShuffleSeed());
+        input.setPlayerOneDeckIndex(game.getStartGame().getPlayerOneDeckIdx());
+        input.setPlayerTwoDeckIndex(game.getStartGame().getPlayerTwoDeckIdx());
+        input.setStartingPlayer(game.getStartGame().getStartingPlayer());
+        CardInput playerOneHeroToTransfer = game.getStartGame().getPlayerOneHero();
+        CardInput playerTwoHeroToTransfer = game.getStartGame().getPlayerTwoHero();
+        Card playerOneHero = setHero(playerOneHeroToTransfer);
+        Card playerTwoHero = setHero(playerTwoHeroToTransfer);
+        input.setPlayerOneHero(playerOneHero);
+        input.setPlayerTwoHero(playerTwoHero);
+    }
+
+    // transfer actions from a game
+    public void transferActions(ArrayList<Action> gamesActions, GameInput game) {
+        Action actionTransferred = new Action();
+        for (ActionsInput action : game.getActions()) {
+            actionTransferred.setCommand(action.getCommand());
+            actionTransferred.setHandIndex(action.getHandIdx());
+            actionTransferred.setAffectedRow(action.getAffectedRow());
+            actionTransferred.setPlayerIndex(action.getPlayerIdx());
+            CardCoordinates cardAttacker = new CardCoordinates(action.getCardAttacker().getX(), action.getCardAttacker().getY());
+            CardCoordinates cardAttacked = new CardCoordinates(action.getCardAttacked().getX(), action.getCardAttacked().getY());
+            actionTransferred.setCardAttacker(cardAttacker);
+            actionTransferred.setCardAttacked(cardAttacked);
+        }
+    }
+    // set games list
+    public void setGameInputs(Input inputData) {
+        ArrayList<GameInput> games = inputData.getGames();
+        ArrayList<GamesInput> gamesStartInputs = new ArrayList<>();
+
+        for (GameInput game : games) {
+            // transfer start game data
+            GamesInput gameTransferred = new GamesInput();
+            InputPlayers input = new InputPlayers();
+            setInputOfGame(input, game);
+            gameTransferred.setGameStart(input);
+            gamesStartInputs.add(gameTransferred);
+
+            // transfer actions
+            ArrayList<Action> gamesActions = new ArrayList<>();
+            transferActions(gamesActions, game);
+            gameTransferred.setActions(gamesActions);
+            gamesStartInputs.add(gameTransferred);
+
+        }
+
 
     }
 }

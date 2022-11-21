@@ -2,5 +2,5 @@ package cards;
 
 import interfaces.Environment;
 
-public class HeartHound extends Card implements Environment {
+public class HeartHound extends Card {
 }

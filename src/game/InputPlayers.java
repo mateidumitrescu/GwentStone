@@ -9,6 +9,16 @@ public class InputPlayers {
     private int playerOneDeckIndex;
     private int playerTwoDeckIndex;
 
+    private int shuffleSeed;
+
+    public int getShuffleSeed() {
+        return shuffleSeed;
+    }
+
+    public void setShuffleSeed(int shuffleSeed) {
+        this.shuffleSeed = shuffleSeed;
+    }
+
     public int getStartingPlayer() {
         return startingPlayer;
     }

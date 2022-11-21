@@ -8,15 +8,12 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import checker.CheckerConstants;
 import fileio.Input;
-import game.GameRound;
-import game.Player;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -75,7 +72,7 @@ public final class Main {
 
         //TODO add here the entry point to your implementation
         Game game = new Game();
-
+        game.setDecksForPlayers(inputData);
 
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();

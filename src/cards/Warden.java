@@ -2,7 +2,7 @@ package cards;
 
 import interfaces.Minion;
 
-public class Warden extends Card implements Minion {
+public class Warden extends Card {
     private boolean justJoined;
 
     public boolean isJustJoined() {
