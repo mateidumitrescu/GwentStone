@@ -131,10 +131,6 @@ public class Card {
                 }
             }
         }
-        if (game.getPlayerTurn() == 1)
-            System.out.println("USE HERO ABILITY " + game.getPlayerOne().getMana() + " player one");
-        else
-            System.out.println("USE HERO ABILITY " + game.getPlayerTwo().getMana() + " player two");
         // updating mana and card has attacked
         this.setHasAttacked(true);
         if (game.getPlayerTurn() == 1) {
@@ -142,10 +138,6 @@ public class Card {
         } else if (game.getPlayerTurn() == 2){
             game.getPlayerTwo().setMana(game.getPlayerTwo().getMana() - this.getMana());
         }
-        if (game.getPlayerTurn() == 1)
-            System.out.println("AFTER " + game.getPlayerOne().getMana() + " player one");
-        else
-            System.out.println("AFTER " + game.getPlayerTwo().getMana() + " player two");
 
     }
 

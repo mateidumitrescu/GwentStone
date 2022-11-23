@@ -34,7 +34,7 @@ public class Game {
         Game.gamesPlayed += 1;
     }
 
-    public static int getPlayerOneWins() {
+    public int getPlayerOneWins() {
         return playerOneWins;
     }
 
@@ -42,7 +42,7 @@ public class Game {
         Game.playerOneWins = playerOneWins;
     }
 
-    public static int getPlayerTwoWins() {
+    public int getPlayerTwoWins() {
         return playerTwoWins;
     }
 
@@ -50,7 +50,7 @@ public class Game {
         Game.playerTwoWins = playerTwoWins;
     }
 
-    public static int getGamesPlayed() {
+    public int getGamesPlayed() {
         return gamesPlayed;
     }
 
@@ -103,7 +103,7 @@ public class Game {
     private ArrayList<InputGame> games;
 
     public Game() {
-        games = new ArrayList<>();
+        this.increaseGamesPlayed();
     }
 
     public Card returnCard(String name) {
@@ -250,19 +250,15 @@ public class Game {
     }
 
     // set games list
-    public void setGameInputs(Input inputData) {
-        ArrayList<GameInput> games = inputData.getGames();
-        this.games = new ArrayList<>();
-        for (GameInput game : games) {
-            InputGame gameToAdd = new InputGame();
-            StartInputGame startInput = new StartInputGame();
-            setInputOfGame(startInput, game);
-            ArrayList<Action> actions = new ArrayList<>();
-            transferActions(actions, game);
-            gameToAdd.setGameStart(startInput);
-            gameToAdd.setActions(actions);
-            this.games.add(gameToAdd);
-        }
+    public InputGame setGameInputs(GameInput game) {
+        InputGame gameToAdd = new InputGame();
+        StartInputGame startInput = new StartInputGame();
+        setInputOfGame(startInput, game);
+        ArrayList<Action> actions = new ArrayList<>();
+        transferActions(actions, game);
+        gameToAdd.setGameStart(startInput);
+        gameToAdd.setActions(actions);
+        return gameToAdd;
     }
 
     // output players decks
@@ -811,6 +807,7 @@ public class Game {
                 hero.getPlayerTwoHero().subtractHealth(cardAttacker.getAttackDamage());
                 if (hero.getPlayerTwoHero().getHealth() <= 0) {
                     output.add(gameEnded(1));
+                    this.increasePlayerOneWins();
                 }
                 cardAttacker.setHasAttacked(true);
             }
@@ -821,6 +818,7 @@ public class Game {
                 hero.getPlayerOneHero().subtractHealth(cardAttacker.getAttackDamage());
                 if (hero.getPlayerOneHero().getHealth() <= 0) {
                     output.add(gameEnded(2));
+                    this.incresePlayerTwoWins();
                 }
                 cardAttacker.setHasAttacked(true);
             }
@@ -841,7 +839,6 @@ public class Game {
     public void useHeroAbility(ArrayNode output, int affectedRow, StartInputGame game) {
         Card heroPlayerOne = game.getPlayerOneHero();
         Card heroPlayerTwo = game.getPlayerTwoHero();
-        System.out.println(this.getPlayerTurn());
         if (this.getPlayerTurn() == 1) {
             if (heroPlayerOne.getMana() > this.getPlayerOne().getMana()) {
                 output.add(outputHeroAbilityError(affectedRow, "Not enough mana to use hero's ability."));
@@ -899,6 +896,25 @@ public class Game {
         }
     }
 
+    // get player one total wins
+    public ObjectNode outputPlayerWins(String command) {
+        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+        objectNode.put("command", command);
+        if (command.equals("getPlayerOneWins")) {
+            objectNode.put("output", this.getPlayerOneWins());
+        } else {
+            objectNode.put("output", this.getPlayerTwoWins());
+        }
+        return objectNode;
+    }
+    // get total games played
+    public ObjectNode outputTotalGamesPlayed() {
+        ObjectNode objectNode = new ObjectMapper().createObjectNode();
+        objectNode.put("command", "getTotalGamesPlayed");
+        objectNode.put("output", this.getGamesPlayed());
+        return objectNode;
+    }
+
     // iterate through actions
     public void startActions(InputGame game,
                              ArrayNode output,
@@ -911,10 +927,7 @@ public class Game {
 
         int countTurns = 1;
         int countRound = 1;
-        int ct = 1;
         for (Action action : game.getActions()) {
-            System.out.println(ct + " " + action.getCommand());
-            ct++;
             switch (action.getCommand()) {
                 case "getPlayerDeck" ->
                         output.add(outputDecksForPlayer(action.getPlayerIndex(), deckPlayerOne, deckPlayerTwo, "getPlayerDeck"));
@@ -940,30 +953,30 @@ public class Game {
                         action.getCardAttacked().getX(), action.getCardAttacked().getY());
                 case "useAttackHero" -> useAttackHero(output, action.getCardAttacker().getX(), action.getCardAttacker().getY(), game.getGameStart());
                 case "useHeroAbility" -> useHeroAbility(output, action.getAffectedRow(), game.getGameStart());
+                case "getTotalGamesPlayed" -> output.add(outputTotalGamesPlayed());
+                case "getPlayerOneWins", "getPlayerTwoWins" -> output.add(outputPlayerWins(action.getCommand()));
             }
         }
     }
 
-    public void startGames(ArrayNode output) {
-        for (InputGame game : games) {
-            ArrayList<Card> deckPlayerOne = playerOne.getDecks().get(game.getGameStart().getPlayerOneDeckIndex());
-            ArrayList<Card> deckPlayerTwo = playerTwo.getDecks().get(game.getGameStart().getPlayerTwoDeckIndex());
-            shuffleDecks(deckPlayerOne, deckPlayerTwo, game);
+    public void startGames(ArrayNode output, InputGame gamePlayed) {
+        ArrayList<Card> deckPlayerOne = playerOne.getDecks().get(gamePlayed.getGameStart().getPlayerOneDeckIndex());
+        ArrayList<Card> deckPlayerTwo = playerTwo.getDecks().get(gamePlayed.getGameStart().getPlayerTwoDeckIndex());
+        shuffleDecks(deckPlayerOne, deckPlayerTwo, gamePlayed);
 
-            playerOne.setMana(1);
-            playerTwo.setMana(1);
-            if (game.getGameStart().getStartingPlayer() == 1) {
-                this.setPlayerTurn(1);
-            } else if (game.getGameStart().getStartingPlayer() == 2) {
-                this.setPlayerTurn(2);
-            }
-            playerOne.getHandCards().add(deckPlayerOne.get(0));
-            deckPlayerOne.remove(0);
-            playerTwo.getHandCards().add(deckPlayerTwo.get(0));
-            deckPlayerTwo.remove(0);
-            // starting actions iterations
-            startActions(game, output, deckPlayerOne, deckPlayerTwo);
+        playerOne.setMana(1);
+        playerTwo.setMana(1);
+        if (gamePlayed.getGameStart().getStartingPlayer() == 1) {
+            this.setPlayerTurn(1);
+        } else if (gamePlayed.getGameStart().getStartingPlayer() == 2) {
+            this.setPlayerTurn(2);
         }
+        playerOne.getHandCards().add(deckPlayerOne.get(0));
+        deckPlayerOne.remove(0);
+        playerTwo.getHandCards().add(deckPlayerTwo.get(0));
+        deckPlayerTwo.remove(0);
+        // starting actions iterations
+        startActions(gamePlayed, output, deckPlayerOne, deckPlayerTwo);
     }
 }
 

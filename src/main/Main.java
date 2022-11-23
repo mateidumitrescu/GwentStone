@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import checker.CheckerConstants;
 import fileio.Input;
+import game.InputGame;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,9 +81,10 @@ public final class Main {
         for (GameInput game : inputData.getGames()) {
             Game gameToPlay = new Game();
             gameToPlay.setDecksForPlayers(inputData);
-            gameToPlay.setGameInputs(inputData);
+            InputGame gamePlayed = gameToPlay.setGameInputs(game);
+            gameToPlay.startGames(output, gamePlayed);
+
         }
-        game.startGames(output, inputData);
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), output);
     }
