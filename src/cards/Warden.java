@@ -1,15 +1,12 @@
 package cards;
 
-import interfaces.Minion;
 
 public class Warden extends Card {
-    private boolean justJoined;
 
-    public boolean isJustJoined() {
-        return justJoined;
-    }
-
-    public void setJustJoined(boolean justJoined) {
-        this.justJoined = justJoined;
+    public Warden() {
+        super.setFrontRow(true);
+        super.setBackRow(false);
+        super.setTank(true);
+        super.setHasAttacked(false);
     }
 }

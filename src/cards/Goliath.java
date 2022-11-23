@@ -1,15 +1,14 @@
 package cards;
 
-import interfaces.Minion;
+
 
 public class Goliath extends Card {
-    private boolean justJoined;
 
-    public boolean isJustJoined() {
-        return justJoined;
+    public Goliath() {
+        super.setFrontRow(true);
+        super.setBackRow(false);
+        super.setTank(true);
+        super.setHasAttacked(false);
     }
 
-    public void setJustJoined(boolean justJoined) {
-        this.justJoined = justJoined;
-    }
 }

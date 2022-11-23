@@ -1,6 +1,9 @@
 package cards;
 
-import interfaces.Hero;
+
 
 public class EmpressThorina extends Card {
+    public EmpressThorina() {
+        super.setHasAttacked(false);
+    }
 }

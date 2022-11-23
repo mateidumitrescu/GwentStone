@@ -1,10 +1,30 @@
 package game;
 
+import fileio.Coordinates;
+
 public class Action {
     private String command;
     private int handIndex;
-    private CardCoordinates cardAttacker;
-    private CardCoordinates cardAttacked;
+
+    public Coordinates getCardAttacker() {
+        return cardAttacker;
+    }
+
+    public Coordinates getCardAttacked() {
+        return cardAttacked;
+    }
+
+    private Coordinates cardAttacker;
+    private Coordinates cardAttacked;
+
+    public void setCardAttacker(Coordinates cardAttacker) {
+        this.cardAttacker = cardAttacker;
+    }
+
+    public void setCardAttacked(Coordinates cardAttacked) {
+        this.cardAttacked = cardAttacked;
+    }
+
     private int affectedRow;
     private int playerIndex;
     private int x;
@@ -26,21 +46,6 @@ public class Action {
         this.handIndex = handIndex;
     }
 
-    public CardCoordinates getCardAttacker() {
-        return cardAttacker;
-    }
-
-    public void setCardAttacker(CardCoordinates cardAttacker) {
-        this.cardAttacker = cardAttacker;
-    }
-
-    public CardCoordinates getCardAttacked() {
-        return cardAttacked;
-    }
-
-    public void setCardAttacked(CardCoordinates cardAttacked) {
-        this.cardAttacked = cardAttacked;
-    }
 
     public int getAffectedRow() {
         return affectedRow;

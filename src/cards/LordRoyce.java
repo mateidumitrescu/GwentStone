@@ -1,6 +1,9 @@
 package cards;
 
-import interfaces.Hero;
+
 
 public class LordRoyce extends Card {
+    public LordRoyce() {
+        super.setHasAttacked(false);
+    }
 }

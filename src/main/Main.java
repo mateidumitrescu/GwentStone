@@ -1,5 +1,6 @@
 package main;
 
+import fileio.GameInput;
 import game.Game;
 import checker.Checker;
 
@@ -71,10 +72,17 @@ public final class Main {
         ArrayNode output = objectMapper.createArrayNode();
 
         //TODO add here the entry point to your implementation
-        Game game = new Game();
-        game.setDecksForPlayers(inputData);
 
+        Game.setPlayerOneWins(0);
+        Game.setPlayerTwoWins(0);
+        Game.setGamesPlayed(0);
 
+        for (GameInput game : inputData.getGames()) {
+            Game gameToPlay = new Game();
+            gameToPlay.setDecksForPlayers(inputData);
+            gameToPlay.setGameInputs(inputData);
+        }
+        game.startGames(output, inputData);
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), output);
     }

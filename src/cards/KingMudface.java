@@ -1,6 +1,9 @@
 package cards;
 
-import interfaces.Hero;
+
 
 public class KingMudface extends Card {
+    public KingMudface() {
+        super.setHasAttacked(false);
+    }
 }
