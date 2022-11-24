@@ -41,6 +41,14 @@ public class Constant {
         return maxRowPlayerTwo;
     }
 
+    /**
+     *
+     * @return 30
+     */
+    public int getHeroHealth() {
+        return heroHealth;
+    }
+
     public Constant() {
         this.reverseRow = 0;
         this.reverseRow1 = 1;
@@ -54,8 +62,10 @@ public class Constant {
         this.firstIndex = 0;
         this.maxRowPlayerOne = 4;
         this.maxRowPlayerTwo = 2;
+        this.heroHealth = 30;
 
     }
+    private final int heroHealth;
     private final int maxRowPlayerTwo;
     private final int maxRowPlayerOne;
     private final int firstIndex;

@@ -53,7 +53,7 @@ public class Game {
      *
      * @param playerOneWins set
      */
-    public static void setPlayerOneWins(int playerOneWins) {
+    public static void setPlayerOneWins(final int playerOneWins) {
         Game.playerOneWins = playerOneWins;
     }
 
@@ -69,7 +69,7 @@ public class Game {
      *
      * @param playerTwoWins set
      */
-    public static void setPlayerTwoWins(int playerTwoWins) {
+    public static void setPlayerTwoWins(final int playerTwoWins) {
         Game.playerTwoWins = playerTwoWins;
     }
 
@@ -85,7 +85,7 @@ public class Game {
      *
      * @param gamesPlayed set
      */
-    public static void setGamesPlayed(int gamesPlayed) {
+    public static void setGamesPlayed(final int gamesPlayed) {
         Game.gamesPlayed = gamesPlayed;
     }
 
@@ -94,10 +94,10 @@ public class Game {
      * @return table of cards
      */
     public ArrayList<ArrayList<Card>> getTable() {
-        return Table;
+        return table;
     }
 
-    private ArrayList<ArrayList<Card>> Table;
+    private ArrayList<ArrayList<Card>> table;
 
     /**
      *
@@ -111,7 +111,7 @@ public class Game {
      *
      * @param playerTurn set
      */
-    public void setPlayerTurn(int playerTurn) {
+    public void setPlayerTurn(final int playerTurn) {
         this.playerTurn = playerTurn;
     }
 
@@ -143,7 +143,7 @@ public class Game {
      *
      * @param games set
      */
-    public void setGames(ArrayList<InputGame> games) {
+    public void setGames(final ArrayList<InputGame> games) {
         this.games = games;
     }
 
@@ -161,7 +161,7 @@ public class Game {
      * @param name of card
      * @return card created
      */
-    public Card returnCard(String name) {
+    public Card returnCard(final String name) {
         switch (name) {
             case "Berserker" -> {
                 return new Berserker();
@@ -196,8 +196,10 @@ public class Game {
             case "Winterfell" -> {
                 return new Winterfell();
             }
+            default -> {
+                return null;
+            }
         }
-        return null;
     }
 
 
@@ -206,7 +208,8 @@ public class Game {
      * @param cardTransfered info
      * @param cardToTransfer info
      */
-    public void setCardCharacteristics(Card cardTransfered, CardInput cardToTransfer) {
+    public void setCardCharacteristics(final Card cardTransfered,
+                                       final CardInput cardToTransfer) {
         cardTransfered.setName(cardToTransfer.getName());
         cardTransfered.setColors(cardToTransfer.getColors());
         cardTransfered.setAttackDamage(cardToTransfer.getAttackDamage());
@@ -222,7 +225,8 @@ public class Game {
      * @param playerDecks -
      * @param player -
      */
-    public void transferDecks(DecksInput playerDecks, Player player) {
+    public void transferDecks(final DecksInput playerDecks,
+                              final Player player) {
         ArrayList<ArrayList<CardInput>> decks = playerDecks.getDecks();
         ArrayList<ArrayList<Card>> decksPlayerOne = new ArrayList<>();
 
@@ -245,7 +249,7 @@ public class Game {
      *
      * @param inputData info
      */
-    public void setDecksForPlayers(Input inputData) {
+    public void setDecksForPlayers(final Input inputData) {
         DecksInput playerOneDecks = inputData.getPlayerOneDecks();
         DecksInput playerTwoDecks = inputData.getPlayerTwoDecks();
 
@@ -266,8 +270,8 @@ public class Game {
      * @param playerHeroToTransfer card
      * @return hero transfered
      */
-    public Card setHero(CardInput playerHeroToTransfer) {
-        Card playerHero = null;
+    public Card setHero(final CardInput playerHeroToTransfer) {
+        Card playerHero;
         switch (playerHeroToTransfer.getName()) {
             case "Lord Royce" -> playerHero = new LordRoyce();
             case "Empress Thorina" -> playerHero = new EmpressThorina();
@@ -291,7 +295,9 @@ public class Game {
      * @param input info
      * @param game info
      */
-    public void setInputOfGame(StartInputGame input, GameInput game) {
+    public void setInputOfGame(final StartInputGame input,
+                               final GameInput game) {
+        Constant helper = new Constant();
         input.setShuffleSeed(game.getStartGame().getShuffleSeed());
         input.setPlayerOneDeckIndex(game.getStartGame().getPlayerOneDeckIdx());
         input.setPlayerTwoDeckIndex(game.getStartGame().getPlayerTwoDeckIdx());
@@ -302,8 +308,8 @@ public class Game {
         Card playerTwoHero = setHero(playerTwoHeroToTransfer);
         input.setPlayerOneHero(playerOneHero);
         input.setPlayerTwoHero(playerTwoHero);
-        input.getPlayerOneHero().setHealth(30);
-        input.getPlayerTwoHero().setHealth(30);
+        input.getPlayerOneHero().setHealth(helper.getHeroHealth());
+        input.getPlayerTwoHero().setHealth(helper.getHeroHealth());
     }
 
     /**
@@ -311,7 +317,8 @@ public class Game {
      * @param gamesActions actions of a game
      * @param game info
      */
-    public void transferActions(ArrayList<Action> gamesActions, GameInput game) {
+    public void transferActions(final ArrayList<Action> gamesActions,
+                                final GameInput game) {
         for (ActionsInput action : game.getActions()) {
             Action actionTransferred = new Action();
             actionTransferred.setCommand(action.getCommand());
@@ -328,7 +335,11 @@ public class Game {
     }
 
     /**
-    public InputGame setGameInputs(GameInput game) {
+     *
+     * @param game info
+     * @return info of input
+     */
+    public InputGame setGameInputs(final GameInput game) {
         InputGame gameToAdd = new InputGame();
         StartInputGame startInput = new StartInputGame();
         setInputOfGame(startInput, game);
@@ -339,8 +350,15 @@ public class Game {
         return gameToAdd;
     }
 
-    // shuffle decks for players
-    public void shuffleDecks(ArrayList<Card> deckPlayerOne, ArrayList<Card> deckPlayerTwo, InputGame game) {
+    /**
+     *
+     * @param deckPlayerOne to shuffle
+     * @param deckPlayerTwo to shuffle
+     * @param game info with seed
+     */
+    public void shuffleDecks(final ArrayList<Card> deckPlayerOne,
+                             final ArrayList<Card> deckPlayerTwo,
+                             final InputGame game) {
         Random rndObj = new Random();
         rndObj.setSeed(game.getGameStart().getShuffleSeed());
         Collections.shuffle(deckPlayerOne, rndObj);
@@ -350,8 +368,12 @@ public class Game {
         Collections.shuffle(deckPlayerTwo, randObj2);
     }
 
-    // get player one total wins
-    public ObjectNode outputPlayerWins(String command) {
+    /**
+     *
+     * @param command "getPlayerOneWins" / "getPlayerTwoWins"
+     * @return objectnode to output
+     */
+    public ObjectNode outputPlayerWins(final String command) {
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put("command", command);
         if (command.equals("getPlayerOneWins")) {
@@ -361,7 +383,11 @@ public class Game {
         }
         return objectNode;
     }
-    // get total games played
+
+    /**
+     *
+     * @return objectnode to add to output
+     */
     public ObjectNode outputTotalGamesPlayed() {
         ObjectNode objectNode = new ObjectMapper().createObjectNode();
         objectNode.put("command", "getTotalGamesPlayed");
@@ -369,12 +395,20 @@ public class Game {
         return objectNode;
     }
 
-    // iterate through actions
-    public void startActions(InputGame game,
-                             ArrayNode output,
-                             ArrayList<Card> deckPlayerOne, ArrayList<Card> deckPlayerTwo) {
-        this.Table = new ArrayList<>(4); // new table for game
-        for (int i = 0; i < 4; i++) {
+    /**
+     *
+     * @param game info input
+     * @param output -
+     * @param deckPlayerOne cards
+     * @param deckPlayerTwo cards
+     */
+    public void startActions(final InputGame game,
+                             final ArrayNode output,
+                             final ArrayList<Card> deckPlayerOne,
+                             final ArrayList<Card> deckPlayerTwo) {
+        Constant helper = new Constant();
+        this.table = new ArrayList<>(helper.getMaxRowPlayerOne()); // new table for game
+        for (int i = 0; i < helper.getMaxRowPlayerOne(); i++) {
             ArrayList<Card> columns = new ArrayList<>();
             this.getTable().add(i, columns);
         }
@@ -385,38 +419,85 @@ public class Game {
             ActionHandler actionHandler = new ActionHandler();
             switch (action.getCommand()) {
                 case "getPlayerDeck" ->
-                        output.add(actionHandler.outputDecksForPlayer(action.getPlayerIndex(), deckPlayerOne, deckPlayerTwo, "getPlayerDeck"));
-                case "getPlayerHero" -> output.add(actionHandler.outputHeroForPlayer(action.getPlayerIndex(), game.getGameStart()));
-                case "getPlayerTurn" -> output.add(actionHandler.outputPlayerTurn(this.getPlayerTurn()));
+                        output.add(actionHandler.outputDecksForPlayer(action.getPlayerIndex(),
+                                deckPlayerOne, deckPlayerTwo,
+                                "getPlayerDeck"));
+                case "getPlayerHero" ->
+                        output.add(actionHandler.outputHeroForPlayer(action.getPlayerIndex(),
+                                game.getGameStart()));
+                case "getPlayerTurn" ->
+                        output.add(actionHandler.outputPlayerTurn(this.getPlayerTurn()));
                 case "endPlayerTurn" -> {
                     countTurns++;
-                    countRound = actionHandler.endPlayerTurn(countTurns, countRound, deckPlayerOne, deckPlayerTwo, game.getGameStart(), this);
+                    countRound = actionHandler.endPlayerTurn(countTurns, countRound,
+                            deckPlayerOne, deckPlayerTwo,
+                            game.getGameStart(), this);
 
                 }
-                case "placeCard" -> actionHandler.placeCard(action.getHandIndex(), output, this);
-                case "getCardsInHand" -> output.add(actionHandler.outputCardsInHand(action.getPlayerIndex(), this.getPlayerOne(), this.getPlayerTwo()));
-                case "getPlayerMana" -> output.add(actionHandler.outputPlayerMana(action.getPlayerIndex(), this.getPlayerOne().getMana(), this.getPlayerTwo().getMana()));
-                case "getCardsOnTable" -> output.add(actionHandler.outputCardsOnTable(this));
-                case "getEnvironmentCardsInHand" -> output.add(actionHandler.outputEnvironmentCardsInHand(action.getPlayerIndex(),
-                        this.getPlayerOne().getHandCards(), this.getPlayerTwo().getHandCards()));
-                case "useEnvironmentCard" -> actionHandler.useEnvironmentCard(action.getAffectedRow(), action.getHandIndex(), output, this);
-                case "getCardAtPosition" -> output.add(actionHandler.getCardAtPosition(action.getX(), action.getY(), this));
-                case "getFrozenCardsOnTable" -> output.add(actionHandler.getFrozenCardsOnTable(this));
-                case "cardUsesAttack" -> actionHandler.cardUsesAttack(output, action.getCardAttacker().getX(), action.getCardAttacker().getY(),
+                case "placeCard" ->
+                        actionHandler.placeCard(action.getHandIndex(),
+                                output, this);
+                case "getCardsInHand" ->
+                        output.add(actionHandler.outputCardsInHand(action.getPlayerIndex(),
+                                this.getPlayerOne(), this.getPlayerTwo()));
+                case "getPlayerMana" ->
+                        output.add(actionHandler.outputPlayerMana(action.getPlayerIndex(),
+                        this.getPlayerOne().getMana(), this.getPlayerTwo().getMana()));
+                case "getCardsOnTable" ->
+                        output.add(actionHandler.outputCardsOnTable(this));
+                case "getEnvironmentCardsInHand" -> {
+                    ObjectNode outputEnvironmentCards =
+                            actionHandler.outputEnvironmentCardsInHand(action.getPlayerIndex(),
+                            this.getPlayerOne().getHandCards(),
+                            this.getPlayerTwo().getHandCards());
+                    output.add(outputEnvironmentCards);
+                }
+                case "useEnvironmentCard" ->
+                        actionHandler.useEnvironmentCard(action.getAffectedRow(),
+                                action.getHandIndex(), output, this);
+                case "getCardAtPosition" ->
+                        output.add(actionHandler.getCardAtPosition(action.getX(),
+                        action.getY(), this));
+                case "getFrozenCardsOnTable" ->
+                        output.add(actionHandler.getFrozenCardsOnTable(this));
+                case "cardUsesAttack" ->
+                        actionHandler.cardUsesAttack(output,
+                        action.getCardAttacker().getX(), action.getCardAttacker().getY(),
                         action.getCardAttacked().getX(), action.getCardAttacked().getY(), this);
-                case "cardUsesAbility" -> actionHandler.cardUsesAbility(output, action.getCardAttacker().getX(), action.getCardAttacker().getY(),
-                        action.getCardAttacked().getX(), action.getCardAttacked().getY(), this);
-                case "useAttackHero" -> actionHandler.useAttackHero(output, action.getCardAttacker().getX(), action.getCardAttacker().getY(), game.getGameStart(), this);
-                case "useHeroAbility" -> actionHandler.useHeroAbility(output, action.getAffectedRow(), game.getGameStart(), this);
+                case "cardUsesAbility" ->
+                        actionHandler.cardUsesAbility(output,
+                        action.getCardAttacker().getX(), action.getCardAttacker().getY(),
+                        action.getCardAttacked().getX(), action.getCardAttacked().getY(),
+                                this);
+                case "useAttackHero" ->
+                        actionHandler.useAttackHero(output,
+                        action.getCardAttacker().getX(), action.getCardAttacker().getY(),
+                        game.getGameStart(), this);
+                case "useHeroAbility" ->
+                        actionHandler.useHeroAbility(output,
+                        action.getAffectedRow(),
+                        game.getGameStart(), this);
                 case "getTotalGamesPlayed" -> output.add(outputTotalGamesPlayed());
-                case "getPlayerOneWins", "getPlayerTwoWins" -> output.add(outputPlayerWins(action.getCommand()));
+                case "getPlayerOneWins", "getPlayerTwoWins" ->
+                        output.add(outputPlayerWins(action.getCommand()));
+                default -> {
+                    return;
+                }
             }
         }
     }
 
-    public void startGames(ArrayNode output, InputGame gamePlayed) {
-        ArrayList<Card> deckPlayerOne = playerOne.getDecks().get(gamePlayed.getGameStart().getPlayerOneDeckIndex());
-        ArrayList<Card> deckPlayerTwo = playerTwo.getDecks().get(gamePlayed.getGameStart().getPlayerTwoDeckIndex());
+    /**
+     *
+     * @param output -
+     * @param gamePlayed game playing now
+     */
+    public void startGames(final ArrayNode output,
+                           final InputGame gamePlayed) {
+        ArrayList<Card> deckPlayerOne =
+                playerOne.getDecks().get(gamePlayed.getGameStart().getPlayerOneDeckIndex());
+        ArrayList<Card> deckPlayerTwo =
+                playerTwo.getDecks().get(gamePlayed.getGameStart().getPlayerTwoDeckIndex());
         shuffleDecks(deckPlayerOne, deckPlayerTwo, gamePlayed);
 
         playerOne.setMana(1);
